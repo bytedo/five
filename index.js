@@ -4,20 +4,35 @@
  * @date    2015-11-25 18:06:14
  *
  */
-'use strict'
 
-require('es.shim') // 加载拓展方法
-var init = require('./lib/reg-init')
+import 'es.shim' // 加载拓展方法
+import init from './lib/reg-init'
+
+import http from 'http'
+import path from 'path'
+import Request from 'http.request'
+import Response from 'http.response'
+
+import Smarty from 'smartyx' //模板引擎
+import Log from './lib/module/log' //基础日志记录工具
+import Email from './lib/module/sendmail' //加载email发送类
+import Mysql from 'mysqli' //加载mysql操作类
+import Ioredis from 'ioredis'
+
+import sec from 'crypto.js'
+import path from 'path'
+import url from 'url'
+import fs from 'iofs'
+import child from 'child_process'
+
+import Controller from './lib/controller'
+
+import routerWare from './lib/middleware/router'
+import cookieWare from './lib/middleware/cookie'
+import sessionWare from './lib/middleware/session'
+import credentialsWare from './lib/middleware/credentials'
 
 var log = console.log
-var http = require('http')
-var path = require('path')
-var Request = require('http.request')
-var Response = require('http.response')
-var routerWare = require('./lib/middleware/router')
-var cookieWare = require('./lib/middleware/cookie')
-var sessionWare = require('./lib/middleware/session')
-var credentialsWare = require('./lib/middleware/credentials')
 
 function hideProperty(host, name, value) {
   Object.defineProperty(host, name, {
@@ -28,7 +43,7 @@ function hideProperty(host, name, value) {
   })
 }
 
-class Five {
+export default class Five {
   constructor() {
     hideProperty(this, '__FIVE__', Object.assign({}, init))
     hideProperty(this, '__MODULES__', { __error__: null })
@@ -36,20 +51,20 @@ class Five {
     hideProperty(this, '__INSTANCE__', {})
 
     global.libs = {
-      Smarty: require('smartyx'), //模板引擎
-      Log: require('./lib/module/log'), //基础日志记录工具
-      Email: require('./lib/module/sendmail'), //加载email发送类
-      Mysql: require('mysqli'), //加载mysql操作类
-      Ioredis: require('ioredis')
+      Smarty, //模板引擎
+      Log, //基础日志记录工具
+      Email, //加载email发送类
+      Mysql, //加载mysql操作类
+      Ioredis
     }
     global.Util = {
-      sec: require('crypto.js'),
-      path: require('path'),
-      url: require('url'),
-      fs: require('iofs'),
-      child: require('child_process')
+      sec,
+      path,
+      url,
+      fs,
+      child
     }
-    global.Controller = require('./lib/controller')
+    global.Controller = Controller
   }
 
   __init__() {
@@ -141,7 +156,7 @@ class Five {
           return
         }
         try {
-          this.__MODULES__[name] = require(file)
+          this.__MODULES__[name] = import(file)
         } catch (err) {
           this.__MODULES__.__error__ = err
         }
@@ -198,5 +213,3 @@ class Five {
     return server
   }
 }
-
-module.exports = Five
