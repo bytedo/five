@@ -6,7 +6,8 @@
  */
 'use strict'
 
-const mailx = require('mailx')
+import mailx from 'mailx'
+
 export default class Sendmail {
   constructor({ host, port, mail, passwd } = {}) {
     if (!host || !port || !mail || !passwd) {

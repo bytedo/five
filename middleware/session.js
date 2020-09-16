@@ -4,8 +4,8 @@
  * @date    2018-07-26 15:50:25
  * @version $Id$
  */
-import redisStore from '../module/redis-store'
-import nativeStore from '../module/native-store'
+import redisStore from '../module/redis-store.js'
+import nativeStore from '../module/native-store.js'
 
 export default function(req, res, next) {
   var opt = this.get('session')

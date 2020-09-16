@@ -6,31 +6,30 @@
  */
 
 import 'es.shim' // 加载拓展方法
-import init from './lib/reg-init'
+import init from './lib/reg-init.js'
 
 import http from 'http'
 import path from 'path'
-import Request from 'http.request'
-import Response from 'http.response'
+import Request from '../request/index.js'
+import Response from '../response/index.js'
 
-import Smarty from 'smartyx' //模板引擎
-import Log from './lib/module/log' //基础日志记录工具
-import Email from './lib/module/sendmail' //加载email发送类
+// import Smarty from 'smartyx' //模板引擎
+import Log from './module/log.js' //基础日志记录工具
+import Email from './module/sendmail.js' //加载email发送类
 import Mysql from 'mysqli' //加载mysql操作类
 import Ioredis from 'ioredis'
 
 import sec from 'crypto.js'
-import path from 'path'
 import url from 'url'
 import fs from 'iofs'
 import child from 'child_process'
 
-import Controller from './lib/controller'
+import Controller from './lib/controller.js'
 
-import routerWare from './lib/middleware/router'
-import cookieWare from './lib/middleware/cookie'
-import sessionWare from './lib/middleware/session'
-import credentialsWare from './lib/middleware/credentials'
+import routerWare from './middleware/router.js'
+import cookieWare from './middleware/cookie.js'
+import sessionWare from './middleware/session.js'
+import credentialsWare from './middleware/credentials.js'
 
 var log = console.log
 
@@ -49,22 +48,6 @@ export default class Five {
     hideProperty(this, '__MODULES__', { __error__: null })
     hideProperty(this, '__MIDDLEWARE__', [])
     hideProperty(this, '__INSTANCE__', {})
-
-    global.libs = {
-      Smarty, //模板引擎
-      Log, //基础日志记录工具
-      Email, //加载email发送类
-      Mysql, //加载mysql操作类
-      Ioredis
-    }
-    global.Util = {
-      sec,
-      path,
-      url,
-      fs,
-      child
-    }
-    global.Controller = Controller
   }
 
   __init__() {
@@ -147,7 +130,7 @@ export default class Five {
   }
   // 预加载应用
   preload(dir) {
-    var list = Util.fs.ls(dir)
+    var list = fs.ls(dir)
 
     if (list) {
       list.forEach(file => {

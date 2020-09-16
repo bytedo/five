@@ -1,5 +1,5 @@
 {
-  "name": "node-five",
+  "name": "@gm5/core",
   "version": "3.2.6",
   "type": "module",
   "description": "Five.js, 一个轻量级的nodejs mvc框架 旨在简单易用, 5分钟即可上手",
@@ -10,12 +10,11 @@
     "@bytedo/es.shim": "^1.0.0",
     "iofs": "^1.3.2",
     "mysqli": "^3.0.11",
-    "http.request": "^1.1.0",
-    "http.response": "^1.0.2",
-    "http.cookie": "^1.0.2",
+    "@gm5/request": "^1.0.0",
+    "@gm5/response": "^1.0.0",
+    "@gm5/cookie": "^1.0.0",
     "smartyx": "^1.3.1",
-    "ioredis": "^3.2.2",
-    "mailx": "^0.0.11"
+    "ioredis": "^3.2.2"
   },
   "devDependencies": {},
   "repository": {
