@@ -13,11 +13,10 @@ import Ioredis from 'ioredis'
 import Request from '@gm5/request'
 import Response from '@gm5/response'
 import Cookie from '@gm5/cookie'
-import Session from '@gm5/session'
+// import Session from '@gm5/session'
 
 import init from './lib/reg-init.js'
 import Log from './lib/log.js' //基础日志记录工具
-
 
 import routerWare from './middleware/router.js'
 import credentialsWare from './middleware/credentials.js'
