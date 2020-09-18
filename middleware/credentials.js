@@ -1,10 +1,10 @@
 /**
- *
- * @authors yutent (yutent@doui.cc)
- * @date    2018-09-03 22:26:51
+ * 跨域中间件
+ * @author yutent<yutent.io@gmail.com>
+ * @date 2020/09/18 14:55:49
  */
 
-'use strict'
+import url from 'url'
 
 export default function(req, res, next) {
   var supportCredentials = this.get('supportCredentials')
@@ -14,7 +14,7 @@ export default function(req, res, next) {
   if (supportCredentials) {
     var origin = req.header('origin') || req.header('referer') || ''
     var headers = req.header('access-control-request-headers')
-    origin = Util.url.parse(origin)
+    origin = url.parse(origin)
 
     if (credentialsRule && origin.hostname) {
       if (!credentialsRule.test(origin.hostname)) {

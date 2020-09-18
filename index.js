@@ -6,30 +6,23 @@
  */
 
 import 'es.shim' // 加载拓展方法
-import init from './lib/reg-init.js'
-
 import http from 'http'
 import path from 'path'
-import Request from '../request/index.js'
-import Response from '../response/index.js'
-
-// import Smarty from 'smartyx' //模板引擎
-import Log from './module/log.js' //基础日志记录工具
-import Email from './module/sendmail.js' //加载email发送类
-import Mysql from 'mysqli' //加载mysql操作类
-import Ioredis from 'ioredis'
-
-import sec from 'crypto.js'
-import url from 'url'
 import fs from 'iofs'
-import child from 'child_process'
+import Ioredis from 'ioredis'
+import Request from '@gm5/request'
+import Response from '@gm5/response'
+import Cookie from '@gm5/cookie'
+import Session from '@gm5/session'
 
-import Controller from './lib/controller.js'
+import init from './lib/reg-init.js'
+import Log from './lib/log.js' //基础日志记录工具
+
 
 import routerWare from './middleware/router.js'
-import cookieWare from './middleware/cookie.js'
-import sessionWare from './middleware/session.js'
 import credentialsWare from './middleware/credentials.js'
+// import cookieWare from './middleware/cookie.js'
+// import sessionWare from './module/session.js'
 
 var log = console.log
 
@@ -61,7 +54,7 @@ export default class Five {
       hideProperty(
         this,
         '__SESSION_STORE__',
-        new libs.Ioredis({
+        new Ioredis({
           host: session.db.host || '127.0.0.1',
           port: session.db.port || 6379,
           db: session.db.db || 0
@@ -73,8 +66,8 @@ export default class Five {
 
     // 将session和cookie的中间件提到最前
     // 以便用户自定义的中间件可以直接操作session和cookie
-    this.__MIDDLEWARE__.unshift(sessionWare)
-    this.__MIDDLEWARE__.unshift(cookieWare)
+    // this.__MIDDLEWARE__.unshift(sessionWare)
+    this.__MIDDLEWARE__.unshift(Cookie)
     this.__MIDDLEWARE__.unshift(credentialsWare)
 
     this.use(routerWare)
@@ -106,9 +99,7 @@ export default class Five {
   get(key) {
     try {
       return new Function('o', `return o.${key}`)(this.__FIVE__)
-    } catch (err) {
-      return
-    }
+    } catch (err) {}
   }
 
   // 加载中间件/缓存模块
@@ -168,10 +159,11 @@ export default class Five {
   // 启动http服务
   listen(port) {
     var _this = this
+    var server
 
     this.__init__()
 
-    var server = http.createServer(function(req, res) {
+    server = http.createServer(function(req, res) {
       var response = new Response(req, res)
       var request = new Request(req, res)
 

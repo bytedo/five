@@ -1,55 +1,59 @@
 /**
- * 路由
- * @authors yutent (yutent@doui.cc)
- * @date    2015-10-01 19:11:19
- *
+ * 路由中间件
+ * @author yutent<yutent.io@gmail.com>
+ * @date 2020/09/18 15:16:29
  */
-'use strict'
 
 export default function(req, res, next) {
+  var debug = this.get('debug')
+
+  // 1. 先判断控制器是否存在
   if (!this.__MODULES__[req.app]) {
-    if (!this.__MODULES__.__error__) {
-      res.error(`The app [${req.app}] not found`, 404)
-    } else {
+    if (this.__MODULES__.__error__) {
       res.error(
-        this.get('debug')
-          ? this.__MODULES__.__error__.stack
-          : this.__MODULES__.__error__,
+        debug ? this.__MODULES__.__error__.stack : this.__MODULES__.__error__,
         500
       )
+    } else {
+      res.error(`Controller [${req.app}] not found`, 404)
     }
     return
   }
 
-  try {
-    if (req.path.length < 1) {
-      req.path.push('index')
-    }
+  // 2. 默认二级路由为index
+  if (req.path.length < 1) {
+    req.path.push('index')
+  }
 
-    this.__MODULES__[req.app].then(Mod => {
+  // 3. 实例化控制器
+  this.__MODULES__[req.app]
+    .then(({ default: Mod }) => {
       var app = new Mod({ ctx: this, req, res })
+      var err = ''
 
-      if (this.get('routeMode') === 1) {
-        var act = req.path.shift()
+      // action模式, 则路由自动调用对应的action方法
+      // __main__模式, 则路由全部走__main__方法
+      if (this.get('routeMode') === 'action') {
+        var route = req.path.shift()
+        var act = route + 'Action'
 
-        if (app[act + 'Action']) {
-          app[act + 'Action'].apply(app, req.path).catch(err => {
-            res.error(this.get('debug') ? err.stack || err : err, 500)
-          })
+        if (app[act]) {
+          return app[act].apply(app, req.path)
         } else {
-          res.error(`Action[${act}] not found`, 404)
+          err = new Error(`Route [${route}] not found`)
         }
       } else {
-        if (app.indexAction) {
-          app.indexAction.apply(app, req.path).catch(err => {
-            res.error(this.get('debug') ? err.stack || err : err, 500)
-          })
+        if (app.__main__) {
+          return app.__main__.apply(app, req.path)
         } else {
-          res.error(`Default Action not found`, 404)
+          err = new Error('__main__() not found')
         }
       }
+
+      err.status = 404
+      return Promise.reject(err)
     })
-  } catch (err) {
-    res.error(this.get('debug') ? err.stack || err : err, 500)
-  }
+    .catch(err => {
+      res.error(debug ? err.stack || err : err, err.status || 500)
+    })
 }
