@@ -9,7 +9,7 @@ import 'es.shim' // 加载拓展方法
 import http from 'http'
 import path from 'path'
 import fs from 'iofs'
-import Ioredis from 'ioredis'
+// import Ioredis from 'ioredis'
 import Request from '@gm5/request'
 import Response from '@gm5/response'
 import Cookie from '@gm5/cookie'
@@ -20,7 +20,7 @@ import Log from './lib/log.js' //基础日志记录工具
 
 import routerWare from './middleware/router.js'
 import credentialsWare from './middleware/credentials.js'
-// import cookieWare from './middleware/cookie.js'
+// import cookieWare from '@gm5/cookie'
 // import sessionWare from './module/session.js'
 
 var log = console.log
@@ -49,19 +49,19 @@ export default class Five {
     this.set({ domain, session })
 
     // 这里只创建session的存储器, 而初始化操作在中间件中进行
-    if (session.type === 'redis') {
-      hideProperty(
-        this,
-        '__SESSION_STORE__',
-        new Ioredis({
-          host: session.db.host || '127.0.0.1',
-          port: session.db.port || 6379,
-          db: session.db.db || 0
-        })
-      )
-    } else {
-      hideProperty(this, '__SESSION_STORE__', {})
-    }
+    // if (session.type === 'redis') {
+    //   hideProperty(
+    //     this,
+    //     '__SESSION_STORE__',
+    //     new Ioredis({
+    //       host: session.db.host || '127.0.0.1',
+    //       port: session.db.port || 6379,
+    //       db: session.db.db || 0
+    //     })
+    //   )
+    // } else {
+    //   hideProperty(this, '__SESSION_STORE__', {})
+    // }
 
     // 将session和cookie的中间件提到最前
     // 以便用户自定义的中间件可以直接操作session和cookie
@@ -162,7 +162,7 @@ export default class Five {
 
     this.__init__()
 
-    server = http.createServer(function(req, res) {
+    server = http.createServer(function (req, res) {
       var response = new Response(req, res)
       var request = new Request(req, res)
 
@@ -172,7 +172,7 @@ export default class Five {
       var fn = middleware.shift()
       if (fn) {
         ;(async function next() {
-          await fn.call(_this, request, response, function() {
+          await fn.call(_this, request, response, function () {
             fn = middleware.shift()
             if (fn) {
               next()
