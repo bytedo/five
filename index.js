@@ -12,7 +12,6 @@ import fs from 'iofs'
 // import Ioredis from 'ioredis'
 import Request from '@gm5/request'
 import Response from '@gm5/response'
-import Cookie from '@gm5/cookie'
 // import Session from '@gm5/session'
 
 import init from './lib/reg-init.js'
@@ -20,7 +19,7 @@ import Log from './lib/log.js' //基础日志记录工具
 
 import routerWare from './middleware/router.js'
 import credentialsWare from './middleware/credentials.js'
-// import cookieWare from '@gm5/cookie'
+
 // import sessionWare from './module/session.js'
 
 var log = console.log
@@ -66,7 +65,6 @@ export default class Five {
     // 将session和cookie的中间件提到最前
     // 以便用户自定义的中间件可以直接操作session和cookie
     // this.__MIDDLEWARE__.unshift(sessionWare)
-    this.__MIDDLEWARE__.unshift(Cookie)
     this.__MIDDLEWARE__.unshift(credentialsWare)
 
     this.use(routerWare)
@@ -162,7 +160,7 @@ export default class Five {
 
     this.__init__()
 
-    server = http.createServer(function (req, res) {
+    server = http.createServer(function(req, res) {
       var response = new Response(req, res)
       var request = new Request(req, res)
 
@@ -172,7 +170,7 @@ export default class Five {
       var fn = middleware.shift()
       if (fn) {
         ;(async function next() {
-          await fn.call(_this, request, response, function () {
+          await fn.call(_this, request, response, function() {
             fn = middleware.shift()
             if (fn) {
               next()
