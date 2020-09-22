@@ -7,28 +7,29 @@
 import url from 'url'
 
 export default function(req, res, next) {
-  var supportCredentials = this.get('supportCredentials')
-  var credentialsRule = this.get('credentialsRule')
-  var credentialsMaxAge = this.get('credentialsMaxAge')
+  var CORS = this.get('cors')
 
-  if (supportCredentials) {
+  if (CORS.enabled) {
     var origin = req.header('origin') || req.header('referer') || ''
     var headers = req.header('access-control-request-headers')
-    origin = url.parse(origin)
+    var { hostname, host, protocol } = url.parse(origin)
 
-    if (credentialsRule && origin.hostname) {
-      if (!credentialsRule.test(origin.hostname)) {
+    if (CORS.origin.length && hostname) {
+      if (!CORS.origin.includes(hostname)) {
         return res.end('')
       }
     }
     res.set('Access-Control-Allow-Credentials', 'true')
-    res.set('Access-Control-Allow-Origin', `${origin.protocol}//${origin.host}`)
+    res.set('Access-Control-Allow-Origin', `${protocol}//${host}`)
+
     if (headers) {
       res.set('Access-Control-Allow-Headers', headers)
     }
-    if (credentialsMaxAge) {
-      res.set('Access-Control-Max-Age', credentialsMaxAge)
+
+    if (CORS.maxAge) {
+      res.set('Access-Control-Max-Age', CORS.maxAge)
     }
+
     if (req.method === 'OPTIONS') {
       return res.end('')
     }

@@ -36,9 +36,8 @@ function hideProperty(host, name, value) {
 export default class Five {
   constructor() {
     hideProperty(this, '__FIVE__', Object.assign({}, init))
-    hideProperty(this, '__MODULES__', { __error__: null })
+    hideProperty(this, '__MODULES__', {})
     hideProperty(this, '__MIDDLEWARE__', [])
-    hideProperty(this, '__INSTANCE__', {})
   }
 
   __init__() {
@@ -94,63 +93,51 @@ export default class Five {
 
   // 获取全局配置
   get(key) {
-    try {
-      return new Function('o', `return o.${key}`)(this.__FIVE__)
-    } catch (err) {}
+    return this.__FIVE__[key]
   }
 
-  // 加载中间件/缓存模块
+  // 加载中间件
   // 与别的中间件用法有些不一样, 回调的传入参数中的req和res,
   // 并非原生的request对象和response对象,
   // 而是框架内部封装过的,可通过origin属性访问原生的对象
-  use(key, fn) {
-    if (arguments.length === 1) {
-      if (typeof key !== 'function') {
-        throw TypeError('argument 1 must be a callback')
-      }
-      this.__MIDDLEWARE__.push(key)
-    } else {
-      if (typeof key !== 'string') {
-        return
-      }
-      libs[key] = fn
+  use(fn) {
+    if (typeof fn === 'function') {
+      this.__MIDDLEWARE__.push(fn)
+      return this
     }
+    throw TypeError('argument must be a callback')
   }
-  // 预加载应用
+
+  // 预加载应用, 缓存以提高性能
   preload(dir) {
     var list = fs.ls(dir)
 
     if (list) {
-      list.forEach(file => {
-        var { name } = path.parse(file)
+      list.forEach(item => {
+        var { name } = path.parse(item)
         if (name.startsWith('.')) {
           return
         }
-        try {
-          this.__MODULES__[name] = import(file)
-        } catch (err) {
-          this.__MODULES__.__error__ = err
+        // 如果是目录,则默认加载index.js, 其他文件不加载
+        // 交由index.js自行处理, 用于复杂的应用
+        if (fs.isdir(item)) {
+          item = path.join(item, './index.js')
         }
+
+        this.__MODULES__[name] = import(item).catch(err => {
+          return { default: null }
+        })
       })
     }
 
     return this
   }
 
-  // 注册实例化对象到实例池中
+  // 注入实例化对象到实例池中
   // 与use方法不同的是, 这个会在server创建之前就已经执行
-  ins(name, fn) {
-    var _this = this
-    if (arguments.length === 1) {
-      return this.__INSTANCE__[name]
-    }
-    if (typeof fn === 'function') {
-      fn.call(this, this.__FIVE__, function next(instance) {
-        if (instance) {
-          _this.__INSTANCE__[name] = instance
-        }
-      })
-    }
+  install({ name, install }) {
+    this['$$' + name] = install.call(this, this.__FIVE__)
+    return this
   }
 
   // 启动http服务
