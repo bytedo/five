@@ -37,7 +37,7 @@ export default class Five {
   constructor() {
     hideProperty(this, '__FIVE__', Object.assign({}, init))
     hideProperty(this, '__MODULES__', {})
-    hideProperty(this, '__MIDDLEWARE__', [])
+    hideProperty(this, '__MIDDLEWARE__', [credentialsWare])
   }
 
   __init__() {
@@ -64,7 +64,7 @@ export default class Five {
     // 将session和cookie的中间件提到最前
     // 以便用户自定义的中间件可以直接操作session和cookie
     // this.__MIDDLEWARE__.unshift(sessionWare)
-    this.__MIDDLEWARE__.unshift(credentialsWare)
+    // this.__MIDDLEWARE__.unshift(credentialsWare)
 
     this.use(routerWare)
   }
@@ -148,13 +148,18 @@ export default class Five {
     this.__init__()
 
     server = http.createServer(function(req, res) {
-      var response = new Response(req, res)
       var request = new Request(req, res)
-
-      response.set('X-Powered-By', 'Five.js')
+      var response = new Response(req, res)
 
       var middleware = _this.__MIDDLEWARE__.concat()
       var fn = middleware.shift()
+
+      if (response.rendered) {
+        return
+      }
+
+      response.set('X-Powered-By', 'Five.js')
+
       if (fn) {
         ;(async function next() {
           await fn.call(_this, request, response, function() {

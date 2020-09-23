@@ -24,8 +24,9 @@ export default function(req, res, next) {
   // 3. 实例化控制器
   this.__MODULES__[req.app]
     .then(({ default: Mod }) => {
-      var app,
-        err = ''
+      var app
+      var err = ''
+
       if (Mod) {
         app = new Mod({ ctx: this, req, res })
 
