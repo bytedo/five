@@ -9,20 +9,16 @@ import 'es.shim' // 加载拓展方法
 import http from 'http'
 import path from 'path'
 import fs from 'iofs'
-// import Ioredis from 'ioredis'
+
 import Request from '@gm5/request'
 import Response from '@gm5/response'
-// import Session from '@gm5/session'
+import { sessionStore, sessionWare } from '@gm5/session'
+import Jwt from '@gm5/jwt'
 
-import init from './lib/reg-init.js'
-import Log from './lib/log.js' //基础日志记录工具
+import config from './config/index.js'
 
 import routerWare from './middleware/router.js'
-import credentialsWare from './middleware/credentials.js'
-
-// import sessionWare from './module/session.js'
-
-var log = console.log
+import corsWare from './middleware/cors.js'
 
 function hideProperty(host, name, value) {
   Object.defineProperty(host, name, {
@@ -35,37 +31,26 @@ function hideProperty(host, name, value) {
 
 export default class Five {
   constructor() {
-    hideProperty(this, '__FIVE__', Object.assign({}, init))
+    hideProperty(this, '__FIVE__', config)
     hideProperty(this, '__MODULES__', {})
-    hideProperty(this, '__MIDDLEWARE__', [credentialsWare])
+    hideProperty(this, '__MIDDLEWARE__', [corsWare])
   }
 
-  __init__() {
+  __main__() {
     var { domain, website, session } = this.__FIVE__
     domain = domain || website
     session.domain = session.domain || domain
     this.set({ domain, session })
 
-    // 这里只创建session的存储器, 而初始化操作在中间件中进行
-    // if (session.type === 'redis') {
-    //   hideProperty(
-    //     this,
-    //     '__SESSION_STORE__',
-    //     new Ioredis({
-    //       host: session.db.host || '127.0.0.1',
-    //       port: session.db.port || 6379,
-    //       db: session.db.db || 0
-    //     })
-    //   )
-    // } else {
-    //   hideProperty(this, '__SESSION_STORE__', {})
-    // }
+    // 安装jwt
+    this.install(Jwt)
 
-    // 将session和cookie的中间件提到最前
-    // 以便用户自定义的中间件可以直接操作session和cookie
-    // this.__MIDDLEWARE__.unshift(sessionWare)
-    // this.__MIDDLEWARE__.unshift(credentialsWare)
+    // 将session中间件提到最前
+    // 以便用户自定义的中间件可以直接操作session
+    this.install(sessionStore)
+    this.__MIDDLEWARE__.unshift(sessionWare)
 
+    // 路由中间件要在最后
     this.use(routerWare)
   }
 
@@ -81,7 +66,7 @@ export default class Five {
           try {
             Object.assign(this.__FIVE__[i], obj[i])
           } catch (err) {
-            log(err)
+            console.error(err)
           }
         }
       } else {
@@ -105,7 +90,14 @@ export default class Five {
       this.__MIDDLEWARE__.push(fn)
       return this
     }
-    throw TypeError('argument must be a callback')
+    throw TypeError('argument must be a function')
+  }
+
+  // 注入实例化对象到实例池中
+  // 与use方法不同的是, 这个会在server创建之前就已经执行
+  install({ name, install }, args) {
+    this['$$' + name] = install.call(this, args)
+    return this
   }
 
   // 预加载应用, 缓存以提高性能
@@ -133,19 +125,12 @@ export default class Five {
     return this
   }
 
-  // 注入实例化对象到实例池中
-  // 与use方法不同的是, 这个会在server创建之前就已经执行
-  install({ name, install }) {
-    this['$$' + name] = install.call(this, this.__FIVE__)
-    return this
-  }
-
   // 启动http服务
   listen(port) {
     var _this = this
     var server
 
-    this.__init__()
+    this.__main__()
 
     server = http.createServer(function(req, res) {
       var request = new Request(req, res)

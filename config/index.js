@@ -23,7 +23,6 @@ export default {
   website: 'localhost',
   domain: '', // cookie域, 默认等于website
   port: 3000,
-  routeMode: 'action', // action | __main__
   env: process.env.NODE_ENV === ENV_PROD ? ENV_PROD : ENV_DEV,
   debug: process.env.NODE_ENV === ENV_DEV, // debug模式
   smtp: {
