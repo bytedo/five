@@ -17,6 +17,8 @@ import Jwt from '@gm5/jwt'
 
 import config from './config/index.js'
 
+import Views from './lib/views.js'
+
 import routerWare from './middleware/router.js'
 import corsWare from './middleware/cors.js'
 
@@ -42,12 +44,15 @@ export default class Five {
     session.domain = session.domain || domain
     this.set({ domain, session })
 
-    // 安装jwt
-    this.install(Jwt)
+    // 用户没手动安装模板引擎时, 才会安装内置的伪引擎
+    if (!this.$$views) {
+      this.install(Views)
+    }
 
     // 将session中间件提到最前
     // 以便用户自定义的中间件可以直接操作session
     this.install(sessionStore)
+    this.install(Jwt)
     this.__MIDDLEWARE__.unshift(sessionWare)
 
     // 路由中间件要在最后

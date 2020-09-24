@@ -13,7 +13,7 @@ export default {
     type: 'native', // native 或 redis
     ttl: 3600 * 24 * 7,
     domain: '', // NODESSID域, 默认等于domain
-    level: 0, // 校验级别, 0: 不校验客户端, 1: 校验UA, 2: 校验UA+IP
+    level: 0, // 校验级别, 0: 不校验客户端, 2: ua, 4: ip, 6: ua + ip
     db: {
       host: '127.0.0.1',
       port: 6379,
@@ -38,7 +38,7 @@ export default {
     origin: [], // ['abc.com', 'a.foo.com']
     maxAge: 0
   },
-  jwt: null, // jwt secret
+  jwt: false, // jwt opened
   regexp: {
     // 常用正则
     email: /^[\w\.\-]+@\w+([\.\-]\w+)*\.\w+$/,
