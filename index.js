@@ -12,15 +12,15 @@ import fs from 'iofs'
 
 import Request from '@gm5/request'
 import Response from '@gm5/response'
-import { sessionStore, sessionWare } from '@gm5/session'
-import Jwt from '@gm5/jwt'
+import { sessionPackage, sessionConnect } from '@gm5/session'
+import { jwtPackage, jwtConnect } from '@gm5/jwt'
 
 import config from './config/index.js'
 
 import Views from './lib/views.js'
 
-import routerWare from './middleware/router.js'
-import corsWare from './middleware/cors.js'
+import Routers from './middleware/router.js'
+import Cors from './middleware/cors.js'
 
 function hideProperty(host, name, value) {
   Object.defineProperty(host, name, {
@@ -35,11 +35,11 @@ export default class Five {
   constructor() {
     hideProperty(this, '__FIVE__', config)
     hideProperty(this, '__MODULES__', {})
-    hideProperty(this, '__MIDDLEWARE__', [corsWare])
+    hideProperty(this, '__MIDDLEWARE__', [Cors])
   }
 
   __main__() {
-    var { domain, website, session } = this.__FIVE__
+    var { domain, website, session, jwt } = this.__FIVE__
     domain = domain || website
     session.domain = session.domain || domain
     this.set({ domain, session })
@@ -49,14 +49,20 @@ export default class Five {
       this.install(Views)
     }
 
-    // 将session中间件提到最前
+    // 将jwt & session中间件提到最前
     // 以便用户自定义的中间件可以直接操作session
-    this.install(sessionStore)
-    this.install(Jwt)
-    this.__MIDDLEWARE__.unshift(sessionWare)
+    if (session.enabled) {
+      this.install(sessionPackage)
+      this.__MIDDLEWARE__.unshift(sessionConnect)
+    }
+    // 开启jwt
+    if (jwt) {
+      this.install(jwtPackage)
+      this.__MIDDLEWARE__.unshift(jwtConnect)
+    }
 
     // 路由中间件要在最后
-    this.use(routerWare)
+    this.use(Routers)
   }
 
   /*------------------------------------------------------------------------*/

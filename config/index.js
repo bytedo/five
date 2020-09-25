@@ -10,6 +10,7 @@ const ENV_DEV = 'development'
 export default {
   db: {},
   session: {
+    enabled: false,
     type: 'native', // native 或 redis
     ttl: 3600 * 24 * 7,
     domain: '', // NODESSID域, 默认等于domain
@@ -19,6 +20,13 @@ export default {
       port: 6379,
       db: 0
     }
+  },
+  jwt: {
+    // jwt 开关
+    enabled: false,
+    ttl: 3600 * 24 * 7,
+    level: 0, // 校验级别, 0: 不校验客户端, 2: ua, 4: ip, 6: ua + ip
+    secret: 'it_is_secret_key' // jwt密钥, 使用时请修改
   },
   website: 'localhost',
   domain: '', // cookie域, 默认等于website
@@ -38,7 +46,6 @@ export default {
     origin: [], // ['abc.com', 'a.foo.com']
     maxAge: 0
   },
-  jwt: false, // jwt opened
   regexp: {
     // 常用正则
     email: /^[\w\.\-]+@\w+([\.\-]\w+)*\.\w+$/,
