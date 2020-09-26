@@ -27,7 +27,7 @@ function hideProperty(host, name, value) {
     value: value,
     writable: true,
     enumerable: false,
-    configurable: true
+    configurable: true,
   })
 }
 
@@ -116,7 +116,7 @@ export default class Five {
     var list = fs.ls(dir)
 
     if (list) {
-      list.forEach(item => {
+      list.forEach((item) => {
         var { name } = path.parse(item)
         if (name.startsWith('.')) {
           return
@@ -127,7 +127,7 @@ export default class Five {
           item = path.join(item, './index.js')
         }
 
-        this.__MODULES__[name] = import(item).catch(err => {
+        this.__MODULES__[name] = import(item).catch((err) => {
           return { default: null }
         })
       })
@@ -143,7 +143,7 @@ export default class Five {
 
     this.__main__()
 
-    server = http.createServer(function(req, res) {
+    server = http.createServer(function (req, res) {
       var request = new Request(req, res)
       var response = new Response(req, res)
 
@@ -158,7 +158,7 @@ export default class Five {
 
       if (fn) {
         ;(async function next() {
-          await fn.call(_this, request, response, function() {
+          await fn.call(_this, request, response, function () {
             fn = middleware.shift()
             if (fn) {
               next()
