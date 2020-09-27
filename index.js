@@ -12,12 +12,11 @@ import fs from 'iofs'
 
 import Request from '@gm5/request'
 import Response from '@gm5/response'
+import Views from '@gm5/views'
 import { sessionPackage, sessionConnect } from '@gm5/session'
 import { jwtPackage, jwtConnect } from '@gm5/jwt'
 
 import config from './config/index.js'
-
-import Views from './lib/views.js'
 
 import Routers from './middleware/router.js'
 import Cors from './middleware/cors.js'
@@ -27,7 +26,7 @@ function hideProperty(host, name, value) {
     value: value,
     writable: true,
     enumerable: false,
-    configurable: true,
+    configurable: true
   })
 }
 
@@ -44,10 +43,8 @@ export default class Five {
     session.domain = session.domain || domain
     this.set({ domain, session })
 
-    // 用户没手动安装模板引擎时, 才会安装内置的伪引擎
-    if (!this.$$views) {
-      this.install(Views)
-    }
+    // 安装模板引擎
+    this.install(Views)
 
     // 将jwt & session中间件提到最前
     // 以便用户自定义的中间件可以直接操作session
@@ -116,7 +113,7 @@ export default class Five {
     var list = fs.ls(dir)
 
     if (list) {
-      list.forEach((item) => {
+      list.forEach(item => {
         var { name } = path.parse(item)
         if (name.startsWith('.')) {
           return
@@ -127,7 +124,7 @@ export default class Five {
           item = path.join(item, './index.js')
         }
 
-        this.__MODULES__[name] = import(item).catch((err) => {
+        this.__MODULES__[name] = import(item).catch(err => {
           return { default: null }
         })
       })
@@ -143,7 +140,7 @@ export default class Five {
 
     this.__main__()
 
-    server = http.createServer(function (req, res) {
+    server = http.createServer(function(req, res) {
       var request = new Request(req, res)
       var response = new Response(req, res)
 
@@ -158,7 +155,7 @@ export default class Five {
 
       if (fn) {
         ;(async function next() {
-          await fn.call(_this, request, response, function () {
+          await fn.call(_this, request, response, function() {
             fn = middleware.shift()
             if (fn) {
               next()

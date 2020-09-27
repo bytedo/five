@@ -40,6 +40,11 @@ export default {
     name: 'no-reply',
     passwd: ''
   },
+  views: {
+    enabled: true,
+    dir: '',
+    ext: '.htm'
+  },
   cors: {
     enabled: false,
     credentials: false,
