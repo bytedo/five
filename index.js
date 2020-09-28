@@ -1,8 +1,7 @@
 /**
  * 框架核心
- * @authors yutent (yutent@doui.cc)
- * @date    2015-11-25 18:06:14
- *
+ * @author yutent<yutent.io@gmail.com>
+ * @date 2020/09/28 10:01:47
  */
 
 import 'es.shim' // 加载拓展方法
