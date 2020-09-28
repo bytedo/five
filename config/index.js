@@ -41,7 +41,7 @@ export default {
     passwd: ''
   },
   views: {
-    enabled: true,
+    enabled: false,
     dir: '',
     ext: '.htm'
   },

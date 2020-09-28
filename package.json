@@ -1,6 +1,6 @@
 {
   "name": "@gm5/core",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "description": "Five.js, 一个轻量级的nodejs mvc框架 旨在简单易用, 5分钟即可上手",
   "author": "yutent <yutent.io@gmail.com>",

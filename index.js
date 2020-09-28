@@ -124,6 +124,7 @@ export default class Five {
         }
 
         this.__MODULES__[name] = import(item).catch(err => {
+          console.error(err)
           return { default: null }
         })
       })
