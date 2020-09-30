@@ -38,8 +38,10 @@ export default class Five {
 
   __main__() {
     var { domain, website, session, jwt } = this.__FIVE__
+
     domain = domain || website
     session.domain = session.domain || domain
+
     this.set({ domain, session })
 
     // 安装模板引擎
