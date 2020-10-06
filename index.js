@@ -1,8 +1,7 @@
 /**
  * 框架核心
- * @authors yutent (yutent@doui.cc)
- * @date    2015-11-25 18:06:14
- *
+ * @author yutent<yutent.io@gmail.com>
+ * @date 2020/09/28 10:01:47
  */
 
 import 'es.shim' // 加载拓展方法
@@ -39,8 +38,10 @@ export default class Five {
 
   __main__() {
     var { domain, website, session, jwt } = this.__FIVE__
+
     domain = domain || website
     session.domain = session.domain || domain
+
     this.set({ domain, session })
 
     // 安装模板引擎
@@ -125,6 +126,7 @@ export default class Five {
         }
 
         this.__MODULES__[name] = import(item).catch(err => {
+          console.error(err)
           return { default: null }
         })
       })

@@ -65,16 +65,19 @@ import Five from '@gm5/core'
 var app = new Five()
 
 app.set({ website: 'www.your_domain.com' })
-app.set({ domain: 'your_domain.com' }) // 设置域，cookie用到，不设置则同步website
 
-app.set({ VIEWS: './views/' }) // [可选], 但是要用到模板渲染页面时, 必须指定
+// 设置域，cookie用到，不设置则等同于website
+// app.set({ domain: 'your_domain.com' }) 
+
+// [可选], 但是要用到模板渲染页面时, 必须指定
+// app.set({ views: { enabled: true, dir: './views/'} }) 
 
 app.preload('./apps/') // [必须], 预加载应用目录
 
 app.listen(3001) // 默认是3000
 ```
 
-其他的配置和功能, 请参考 `文档`。
+其他的配置和功能, 请参考 [文档](https://github.com/bytedo/gmf.core/wiki)。
 
 
 3.  启动应用。在项目根目录打开终端, 输入以下命令 `five-cli start`, 然后根据提示操作, 即可

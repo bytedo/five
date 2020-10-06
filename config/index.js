@@ -40,7 +40,7 @@ export default {
     passwd: ''
   },
   views: {
-    enabled: true,
+    enabled: false,
     dir: '',
     ext: '.htm'
   },
@@ -48,7 +48,7 @@ export default {
     enabled: false,
     credentials: false,
     origin: [], // ['abc.com', 'a.foo.com']
-    maxAge: 0
+    maxAge: 14400
   },
   regexp: {
     // 常用正则

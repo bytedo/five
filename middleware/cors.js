@@ -15,11 +15,21 @@ export default function(req, res, next) {
     var { hostname, host, protocol } = url.parse(origin)
 
     if (CORS.origin.length && hostname) {
-      if (!CORS.origin.includes(hostname)) {
+      var pass = false
+      for (let it of CORS.origin) {
+        if (hostname.endsWith(it)) {
+          pass = true
+          break
+        }
+      }
+      if (pass === false) {
         return res.end('')
       }
     }
-    res.set('Access-Control-Allow-Credentials', 'true')
+    if (CORS.credentials) {
+      res.set('Access-Control-Allow-Credentials', 'true')
+    }
+
     res.set('Access-Control-Allow-Origin', `${protocol}//${host}`)
 
     if (headers) {
