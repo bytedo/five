@@ -11,7 +11,6 @@ export default {
   db: {},
   session: {
     enabled: false,
-    type: 'native', // native 或 redis
     ttl: 3600 * 24 * 7,
     domain: '', // NODESSID域, 默认等于domain
     level: 0, // 校验级别, 0: 不校验客户端, 2: ua, 4: ip, 6: ua + ip
