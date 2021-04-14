@@ -31,6 +31,7 @@ export default function(req, res, next) {
     }
 
     res.set('Access-Control-Allow-Origin', `${protocol}//${host}`)
+    res.set('Access-Control-Allow-Methods', 'GET,HEAD,POST,PUT,DELETE,PATCH')
 
     if (headers) {
       res.set('Access-Control-Allow-Headers', headers)
