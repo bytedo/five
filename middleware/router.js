@@ -4,7 +4,7 @@
  * @date 2020/09/18 15:16:29
  */
 
-export default function(req, res, next) {
+export default function (req, res, next) {
   var debug = this.get('debug')
 
   // 1. 先判断控制器是否存在

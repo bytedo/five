@@ -6,7 +6,7 @@
   "author": "yutent <yutent.io@gmail.com>",
   "main": "index.js",
   "dependencies": {
-    "@gm5/session": "^1.0.0",
+    "@gm5/session": "^1.1.1",
     "@gm5/request": "^1.2.3",
     "@gm5/response": "^1.3.1",
     "@gm5/controller": "^1.0.0",
@@ -21,7 +21,9 @@
     "type": "git",
     "url": "https://github.com/bytedo/gmf.core.git"
   },
-  "keywords": ["five, fivejs, node-five, five.js, nodejs, mvc, koa, express"],
+  "keywords": [
+    "five, fivejs, node-five, five.js, nodejs, mvc, koa, express"
+  ],
   "engines": {
     "node": ">=10.0.0"
   },
