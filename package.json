@@ -1,6 +1,6 @@
 {
   "name": "@gm5/core",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "type": "module",
   "description": "Five.js, 一个轻量级的nodejs mvc框架 旨在简单易用, 5分钟即可上手",
   "author": "yutent <yutent.io@gmail.com>",
@@ -21,9 +21,7 @@
     "type": "git",
     "url": "https://github.com/bytedo/gmf.core.git"
   },
-  "keywords": [
-    "five, fivejs, node-five, five.js, nodejs, mvc, koa, express"
-  ],
+  "keywords": ["five, fivejs, node-five, five.js, nodejs, mvc, koa, express"],
   "engines": {
     "node": ">=10.0.0"
   },
